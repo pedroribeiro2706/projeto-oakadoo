@@ -21,12 +21,18 @@ try:
     # Obter todos os valores da planilha como uma lista de listas
     data = worksheet.get_all_values()
 
-    # Mostrar os dados no Streamlit (opcional, para verificação)
-    st.write(data)
+    # Verificar se há dados na planilha
+    if not data:
+        st.error("No data found in the spreadsheet.")
+    else:
+        # Converter os dados em um DataFrame do pandas
+        df = pd.DataFrame(data[1:], columns=data[0])
+
+        # Mostrar os dados no Streamlit (opcional, para verificação)
+        st.write(df)
+
 except Exception as e:
     st.error(f"Error: {e}")
-# Converter a lista de listas em um DataFrame
-df = pd.DataFrame(data[1:], columns=data[0])
 
 # Converter colunas para os tipos corretos
 df['Progresso'] = df['Progresso'].astype(str).str.replace('%', '', regex=False).astype(float)

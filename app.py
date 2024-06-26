@@ -9,22 +9,22 @@ credentials = service_account.Credentials.from_service_account_info(
     scopes=[
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
-    ],
+    ]
 )
 gc = gspread.authorize(credentials)
 
-# Abrir a planilha pelo nome
-spreadsheet = gc.open("Acompanhamento Projeto Oakadoo")
-worksheet = spreadsheet.get_worksheet(0)
+try:
+    # Abrir a planilha pelo nome
+    spreadsheet = gc.open("Acompanhamento Projeto Oakadoo")
+    worksheet = spreadsheet.get_worksheet(0)
 
-# Obter todos os valores da planilha como uma lista de listas
-data = worksheet.get_all_values()
+    # Obter todos os valores da planilha como uma lista de listas
+    data = worksheet.get_all_values()
 
-st.write(data)
-
+    # Mostrar os dados no Streamlit (opcional, para verificação)
+    st.write(data)
 except Exception as e:
     st.error(f"Error: {e}")
-
 # Converter a lista de listas em um DataFrame
 df = pd.DataFrame(data[1:], columns=data[0])
 

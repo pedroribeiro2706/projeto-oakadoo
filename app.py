@@ -29,13 +29,18 @@ try:
         df = pd.DataFrame(data[1:], columns=data[0])
 
         # Mostrar os dados no Streamlit (opcional, para verificação)
-        st.write(df)
+        st.write("Dados carregados da planilha:", df)
 
         # Verificar se a coluna 'Progresso' existe no DataFrame
         if 'Progresso' in df.columns:
+            st.write("Coluna 'Progresso' encontrada. Aqui estão os dados brutos da coluna:", df['Progresso'])
+            
             # Remover o símbolo de porcentagem e converter para float
-            df['Progresso'] = df['Progresso'].str.rstrip('%').astype(float)
-            st.write(df)
+            try:
+                df['Progresso'] = df['Progresso'].str.rstrip('%').astype(float)
+                st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
+            except ValueError as ve:
+                st.error(f"Erro ao converter a coluna 'Progresso': {ve}")
         else:
             st.error("'Progresso' column not found in the spreadsheet.")
 

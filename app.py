@@ -37,7 +37,8 @@ try:
             
             # Remover o símbolo de porcentagem e converter para float
             try:
-                df['Progresso'] = df['Progresso'].str.rstrip('%').replace('', '0').astype(float)
+                # Substituir valores vazios por '0' e remover '%' antes de converter
+                df['Progresso'] = df['Progresso'].replace('', '0').str.rstrip('%').astype(float)
                 st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
 
                 # Exibir barras de progresso para cada linha

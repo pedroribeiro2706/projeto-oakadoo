@@ -8,6 +8,7 @@ credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=[
         "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
     ],
 )
 gc = gspread.authorize(credentials)
@@ -18,6 +19,11 @@ worksheet = spreadsheet.get_worksheet(0)
 
 # Obter todos os valores da planilha como uma lista de listas
 data = worksheet.get_all_values()
+
+st.write(data)
+
+except Exception as e:
+    st.error(f"Error: {e}")
 
 # Converter a lista de listas em um DataFrame
 df = pd.DataFrame(data[1:], columns=data[0])

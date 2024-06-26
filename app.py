@@ -24,13 +24,38 @@ else:
     # Converter os dados em um DataFrame do pandas
     df = pd.DataFrame(data[1:], columns=data[0])
 
-    # Mostrar os dados no Streamlit (opcional, para verificação)
-    st.write("Dados carregados da planilha:", df)
-
     # Certificar que a coluna 'Progresso' é convertida para float
     df['Progresso'] = df['Progresso'].astype(float)
 
-    # Exibir barras de progresso para cada linha
-    for index, row in df.iterrows():
-        st.write(f"{row['Etapa']} - {row['Progresso'] * 100}%")
-        st.progress(row['Progresso'])
+    # Função para renderizar a barra de progresso como HTML
+    def render_progress_bar(value):
+        bar = f'<div style="width: 100%; background-color: #ddd; height: 20px; position: relative;"><div style="width: {value * 100}%; background-color: #4CAF50; height: 100%;"></div><div style="position: absolute; width: 100%; text-align: center; top: 0; color: white;">{value * 100:.1f}%</div></div>'
+        return bar
+
+    # Aplicar a função para a coluna 'Progresso' e criar uma nova coluna HTML
+    df['Progresso'] = df['Progresso'].apply(render_progress_bar)
+
+    # Estilos CSS simples para ajustar a largura dos cabeçalhos e centralizar a tabela
+styles = """
+<style>
+th {
+    white-space: nowrap;
+}
+.center-table {
+    display: flex;
+    justify-content: center;
+}
+</style>
+"""
+
+# Renderizar estilos CSS e a tabela com barras de progresso dentro de um div centralizado
+st.markdown(styles, unsafe_allow_html=True)
+st.markdown(f'<div class="center-table">{df.to_html(escape=False, index=False)}</div>', unsafe_allow_html=True)
+
+    # Renderizar estilos CSS e a tabela com barras de progresso
+    #st.markdown(styles, unsafe_allow_html=True)
+    #st.write(df.to_html(escape=False, index=False), unsafe_allow_html=True)
+
+    # Renderizar a tabela com barras de progresso usando st.markdown para evitar escape de HTML
+    #table_html = df.to_html(escape=False, index=False)
+    #st.markdown(table_html, unsafe_allow_html=True)

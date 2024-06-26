@@ -13,6 +13,8 @@ credentials = service_account.Credentials.from_service_account_info(
 )
 gc = gspread.authorize(credentials)
 
+df = None
+
 try:
     # Abrir a planilha pelo nome
     spreadsheet = gc.open("Acompanhamento Projeto Oakadoo")
@@ -31,27 +33,30 @@ try:
 except Exception as e:
     st.error(f"Error loading spreadsheet: {e}")
 
-try:
-    # Verificar se a coluna 'Progresso' existe no DataFrame
-    if 'Progresso' in df.columns:
-        st.write("Coluna 'Progresso' encontrada. Aqui estão os dados brutos da coluna:", df['Progresso'])
-        
-        # Remover o símbolo de porcentagem e converter para float
-        df['Progresso'] = df['Progresso'].replace('', '0').str.rstrip('%').astype(float)
-        st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
-    else:
-        st.error("'Progresso' column not found in the spreadsheet.")
-except Exception as e:
-    st.error(f"Error transforming 'Progresso' column: {e}")
+if df is not None:
+    try:
+        # Verificar se a coluna 'Progresso' existe no DataFrame
+        if 'Progresso' in df.columns:
+            st.write("Coluna 'Progresso' encontrada. Aqui estão os dados brutos da coluna:", df['Progresso'])
+            
+            # Remover o símbolo de porcentagem e converter para float
+            df['Progresso'] = df['Progresso'].replace('', '0').str.rstrip('%').astype(float)
+            st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
+        else:
+            st.error("'Progresso' column not found in the spreadsheet.")
+    except Exception as e:
+        st.error(f"Error transforming 'Progresso' column: {e}")
 
-try:
-    if 'Progresso' in df.columns:
-        # Exibir barras de progresso para cada linha
-        for index, row in df.iterrows():
-            st.write(f"{row['Progresso']}%")
-            st.progress(row['Progresso'] / 100)
-except Exception as e:
-    st.error(f"Error displaying progress bars: {e}")
+    try:
+        if 'Progresso' in df.columns:
+            # Exibir barras de progresso para cada linha
+            for index, row in df.iterrows():
+                st.write(f"{row['Progresso']}%")
+                st.progress(row['Progresso'] / 100)
+    except Exception as e:
+        st.error(f"Error displaying progress bars: {e}")
+else:
+    st.error("DataFrame 'df' is not defined due to an earlier error.")
 
 # Converter colunas para os tipos corretos
 df['Progresso'] = df['Progresso'].astype(str).str.replace('%', '', regex=False).astype(float)

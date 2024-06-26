@@ -14,13 +14,13 @@ credentials = service_account.Credentials.from_service_account_info(
 gc = gspread.authorize(credentials)
 
 # Abrir a planilha pelo nome
-spreadsheet = gc.open("Acompanhamento Projeto Oakadoo")
-worksheet = spreadsheet.get_worksheet(0)
+    spreadsheet = gc.open("Acompanhamento Projeto Oakadoo")
+    worksheet = spreadsheet.get_worksheet(0)
 
 # Obter todos os valores da planilha como uma lista de listas
-data = worksheet.get_all_values()
+    data = worksheet.get_all_values()
 
-st.write(data)
+    st.write(data)
 
 except Exception as e:
     st.error(f"Error: {e}")

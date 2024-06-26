@@ -3,7 +3,7 @@ import pandas as pd
 import gspread
 from google.oauth2 import service_account
 
-# Autenticação no Google Drive (substitua pelas suas credenciais)
+# Autenticação no Google Drive
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=[
@@ -20,49 +20,38 @@ try:
 
     # Obter todos os valores da planilha como uma lista de listas
     data = worksheet.get_all_values()
-
-    # Verificar se há dados na planilha
+    
     if not data:
         st.error("No data found in the spreadsheet.")
     else:
         # Converter os dados em um DataFrame do pandas
         df = pd.DataFrame(data[1:], columns=data[0])
-        
-        # Mostrar os dados no Streamlit (opcional, para verificação)
         st.write("Dados carregados da planilha:", df)
 
-        # Verificar se a coluna 'Progresso' existe no DataFrame
-        if 'Progresso' in df.columns:
-            st.write("Coluna 'Progresso' encontrada. Aqui estão os dados brutos da coluna:", df['Progresso'])
-            
-            # Remover o símbolo de porcentagem e converter para float
-            try:
-                # Substituir valores vazios por '0'
-                df['Progresso'] = df['Progresso'].replace('', '0')
-                
-                # Remover '%' e converter para float
-                df['Progresso'] = df['Progresso'].str.rstrip('%')
-                
-                # Depuração: imprimir os valores antes da conversão
-                st.write("Dados da coluna 'Progresso' após remoção de '%':", df['Progresso'])
-                
-                # Converter para float
-                df['Progresso'] = df['Progresso'].astype(float)
-                
-                st.write("Dados da coluna 'Progresso' após conversão para float:", df['Progresso'])
-
-                # Exibir barras de progresso para cada linha
-                for index, row in df.iterrows():
-                    st.write(f"{row['Progresso']}%")
-                    st.progress(row['Progresso'] / 100)
-
-            except ValueError as ve:
-                st.error(f"Erro ao converter a coluna 'Progresso': {ve}")
-        else:
-            st.error("'Progresso' column not found in the spreadsheet.")
-
 except Exception as e:
-    st.error(f"Error: {e}")
+    st.error(f"Error loading spreadsheet: {e}")
+
+try:
+    # Verificar se a coluna 'Progresso' existe no DataFrame
+    if 'Progresso' in df.columns:
+        st.write("Coluna 'Progresso' encontrada. Aqui estão os dados brutos da coluna:", df['Progresso'])
+        
+        # Remover o símbolo de porcentagem e converter para float
+        df['Progresso'] = df['Progresso'].replace('', '0').str.rstrip('%').astype(float)
+        st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
+    else:
+        st.error("'Progresso' column not found in the spreadsheet.")
+except Exception as e:
+    st.error(f"Error transforming 'Progresso' column: {e}")
+
+try:
+    if 'Progresso' in df.columns:
+        # Exibir barras de progresso para cada linha
+        for index, row in df.iterrows():
+            st.write(f"{row['Progresso']}%")
+            st.progress(row['Progresso'] / 100)
+except Exception as e:
+    st.error(f"Error displaying progress bars: {e}")
 
 # Converter colunas para os tipos corretos
 df['Progresso'] = df['Progresso'].astype(str).str.replace('%', '', regex=False).astype(float)

@@ -27,7 +27,7 @@ try:
     else:
         # Converter os dados em um DataFrame do pandas
         df = pd.DataFrame(data[1:], columns=data[0])
-
+        
         # Mostrar os dados no Streamlit (opcional, para verificação)
         st.write("Dados carregados da planilha:", df)
 
@@ -37,9 +37,19 @@ try:
             
             # Remover o símbolo de porcentagem e converter para float
             try:
-                # Substituir valores vazios por '0' e remover '%' antes de converter
-                df['Progresso'] = df['Progresso'].replace('', '0').str.rstrip('%').astype(float)
-                st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
+                # Substituir valores vazios por '0'
+                df['Progresso'] = df['Progresso'].replace('', '0')
+                
+                # Remover '%' e converter para float
+                df['Progresso'] = df['Progresso'].str.rstrip('%')
+                
+                # Depuração: imprimir os valores antes da conversão
+                st.write("Dados da coluna 'Progresso' após remoção de '%':", df['Progresso'])
+                
+                # Converter para float
+                df['Progresso'] = df['Progresso'].astype(float)
+                
+                st.write("Dados da coluna 'Progresso' após conversão para float:", df['Progresso'])
 
                 # Exibir barras de progresso para cada linha
                 for index, row in df.iterrows():

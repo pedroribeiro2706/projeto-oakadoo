@@ -20,7 +20,7 @@ worksheet = spreadsheet.get_worksheet(0)
 # Obter todos os valores da planilha como uma lista de listas
 data = worksheet.get_all_values()
 
-    st.write(data)
+st.write(data)
 
 except Exception as e:
     st.error(f"Error: {e}")

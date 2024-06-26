@@ -31,6 +31,14 @@ try:
         # Mostrar os dados no Streamlit (opcional, para verificação)
         st.write(df)
 
+        # Verificar se a coluna 'Progresso' existe no DataFrame
+        if 'Progresso' in df.columns:
+            # Remover o símbolo de porcentagem e converter para float
+            df['Progresso'] = df['Progresso'].str.rstrip('%').astype(float)
+            st.write(df)
+        else:
+            st.error("'Progresso' column not found in the spreadsheet.")
+
 except Exception as e:
     st.error(f"Error: {e}")
 

@@ -37,12 +37,12 @@ try:
             
             # Remover o símbolo de porcentagem e converter para float
             try:
-                df['Progresso'] = df['Progresso'].str.rstrip('%').astype(float)
+                df['Progresso'] = df['Progresso'].str.rstrip('%').replace('', '0').astype(float)
                 st.write("Dados da coluna 'Progresso' após conversão:", df['Progresso'])
 
                 # Exibir barras de progresso para cada linha
                 for index, row in df.iterrows():
-                    st.write(f"{row['SomeOtherColumn']} - {row['Progresso']}%")
+                    st.write(f"{row['Progresso']}%")
                     st.progress(row['Progresso'] / 100)
 
             except ValueError as ve:
